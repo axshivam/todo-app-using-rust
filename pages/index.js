@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { MdDelete, MdEdit, MdConfirmationNumber } from "react-icons/md";
 import axios from "axios";
 import { format } from "date-fns";
+import CheckBox from "../Components/CheckBox";
 
 const index = () => {
   const [editText, setEditText] = useState();
@@ -58,9 +59,7 @@ const index = () => {
 
         const response = await axios.put(
           `http://127.0.0.1:8080/todos/${todoToUpdate.id}`,
-          {
-            todoToUpdate,
-          }
+          todoToUpdate
         );
 
         console.log(response);
@@ -92,8 +91,9 @@ const index = () => {
         ...todos[index],
         completed: !todos[index].completed,
       };
-      const response = await axios.delete(
-        `http://127.0.0.1:8080/todos/${todoToUpdate.id}`
+      const response = await axios.put(
+        `http://127.0.0.1:8080/todos/${todoToUpdate.id}`,
+        todoToUpdate
       );
 
       const updatedTodos = [...todos];
@@ -127,6 +127,7 @@ const index = () => {
   const renderTodos = (todosTorender) => {
     return todosTorender.map((todo, index) => (
       <li key={index} className="li">
+        <CheckBox toggleCompleted={toggleCompleted} index={index} todo={todo} />
         <label htmlFor="" className="form-check-label"></label>
         <span className="todo-text">
           {`${todo.title} ${formatDate(todo.created_at)}`}
@@ -168,7 +169,7 @@ const index = () => {
 
   useEffect(() => {
     if (search) {
-      onHandleSearch();
+      onHandleSearch(search);
     } else {
       onClearSearch();
     }
@@ -198,11 +199,7 @@ const index = () => {
           <button onClick={() => {}}>Search</button>
         </div>
         <div className="todos">
-          <ul className="todo-list">
-            {
-              renderTodos(todos)
-            }
-          </ul>
+          <ul className="todo-list">{renderTodos(todos)}</ul>
           {todos.length === 0 && (
             <div>
               <imge className="face" src="/" alt="" />
